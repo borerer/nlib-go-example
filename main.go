@@ -8,14 +8,12 @@ import (
 	nlibgo "github.com/borerer/nlib-go"
 )
 
-func ping(in map[string]interface{}) map[string]interface{} {
-	return map[string]interface{}{"message": "pong"}
+func ping(in map[string]interface{}) interface{} {
+	return "pong"
 }
 
-func random(in map[string]interface{}) map[string]interface{} {
-	return map[string]interface{}{
-		"int": rand.Int(),
-	}
+func random(in map[string]interface{}) interface{} {
+	return rand.Int()
 }
 
 func toFloat(in interface{}) float64 {
@@ -32,14 +30,10 @@ func toFloat(in interface{}) float64 {
 	return 0
 }
 
-func add(in map[string]interface{}) map[string]interface{} {
+func add(in map[string]interface{}) interface{} {
 	a := toFloat(in["a"])
 	b := toFloat(in["b"])
-	return map[string]interface{}{
-		"a":   a,
-		"b":   b,
-		"a+b": a + b,
-	}
+	return a + b
 }
 
 func wait() {
