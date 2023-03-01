@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 	"os"
 	"strconv"
@@ -8,12 +9,12 @@ import (
 	nlibgo "github.com/borerer/nlib-go"
 )
 
-func ping(in map[string]interface{}) interface{} {
-	return "pong"
+func ping(req *nlibgo.Request) *nlibgo.Response {
+	return nlibgo.Text("pong")
 }
 
-func random(in map[string]interface{}) interface{} {
-	return rand.Int()
+func random(req *nlibgo.Request) *nlibgo.Response {
+	return nlibgo.Text(fmt.Sprintf("%d", rand.Int()))
 }
 
 func toFloat(in interface{}) float64 {
@@ -30,21 +31,18 @@ func toFloat(in interface{}) float64 {
 	return 0
 }
 
-func add(in map[string]interface{}) interface{} {
-	a := toFloat(in["a"])
-	b := toFloat(in["b"])
-	return a + b
-}
-
-func wait() {
-	ch := make(chan bool)
-	<-ch
+func add(req *nlibgo.Request) *nlibgo.Response {
+	a := toFloat(nlibgo.GetQuery(req, "a"))
+	b := toFloat(nlibgo.GetQuery(req, "b"))
+	return nlibgo.Text(fmt.Sprintf("%f", a+b))
 }
 
 func main() {
-	nlib := nlibgo.NewClient(os.Getenv("NLIB_SERVER"), "nlib-go-example")
-	nlib.RegisterFunction("ping", ping)
-	nlib.RegisterFunction("random", random)
-	nlib.RegisterFunction("add", add)
-	wait()
+	nlibgo.SetEndpoint(os.Getenv("NLIB_SERVER"))
+	nlibgo.SetAppID("nlib-go-example")
+	nlibgo.Must(nlibgo.Connect())
+	nlibgo.RegisterFunction("ping", ping)
+	nlibgo.RegisterFunction("random", random)
+	nlibgo.RegisterFunction("add", add)
+	nlibgo.Wait()
 }
